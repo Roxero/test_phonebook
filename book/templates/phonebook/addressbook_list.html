@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %} Address Book {% endblock %}
+
+{% block content %}
+    <div class = "containter">
+      {% if messages %}
+        <div class = "row">
+          <div class = "col-11 mx-auto mt-1">
+            {% for message in messages %}
+              {% if message.tags == 'error' %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <strong>Error: </strong>{{ message }}
+                </div>
+              {% elif message.tags == 'success' %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <strong>Success! </strong>{{ message }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    {% if all_persons %}
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Last name</th>
+            <th scope="col">First name</th>
+            <th scope="col">Phones</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for person in all_persons %}
+          <tr>
+            <th scope="row">{{forloop.counter}}</th>
+              <td>{{ person.last_name }}</td>
+              <td>{{ person.first_name }}</td>
+              <td>
+                {% for phone in person.phones.all %}
+                    {{ phone }}
+                {% endfor %}
+              </td>
+              <td><A href="{% url 'book:person_card' person.id %}">Edit</A></td>
+              <td><A href="DELETE={{person.id}}">Delete</A></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+          <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Info.</strong> Empty set
+          </div>
+    {% endif %}
+      <div class="container p-3">
+        <div class="row">
+          <div class="col-lg-7 col-sm-12 mx-auto">
+            <div class="card">
+              <form method = "POST">
+                {% csrf_token %}
+              <div class="card-header">
+                Add a new person
+              </div>
+              <div class="containter p-1">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="">Enter Lase and First name</span>
+                  </div>
+                    <input type="text" class="form-control" name="last_name" placeholder="Last name" required>
+                    <input type="text" class="form-control" name="first_name" placeholder="First name" required>
+                  <button type="submit" class="btn btn-success" method="POST">Create</button>
+                </div>
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %} Card of {{ person.last_name }} {{ person.first_name }} {% endblock %}
+
+{% block content %}
+  <div class="container">
+      {% if messages %}
+        <div class = "row">
+          <div class = "col-11 mx-auto mt-1">
+            {% for message in messages %}
+              {% if message.tags == 'error' %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <strong>Error: </strong>{{ message }}
+                </div>
+              {% elif message.tags == 'success' %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <strong>Success! </strong>{{ message }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}    
+    <div class="row">
+      <div class="col-8 mx-auto"
+        <div class="jumbotron">
+          <h1 class="display-10">{{ person.last_name }} {{ person.first_name }}</h1>
+          <hr class="my-4">
+
+          <div class="row">
+            <div class="col">
+              List of phones:<br>
+              {% for phone in phones %}
+                    <form method='POST'>
+                      {% csrf_token %}
+                    {{ phone }}
+                    <button class="btn btn-danger mt-1 sl-5"  type = "submit"  name = "del_phone" id='{{phone}}'>Delete</button>
+                    <input type = "hidden" value = {{phone}} name = "phone_for_del"><P>
+                    </form>
+              {% empty %}
+                No phones yet
+              {% endfor %}
+            </div>
+            <div class="col">
+              <form method = "POST" action="{% url 'book:person_card' person.id %}">
+                {% csrf_token %}
+                Add a new phone:<br>
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="basic-addon1">New phone</span>
+                    </div>
+                    <input type="text" required name="phone_for_add" class="form-control" placeholder="+7-XXX-XXX-XX-XX" aria-label="Username" aria-describedby="basic-addon1">
+                  </div>
+                <button class="btn btn-success" type="submit">Add a phone</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
